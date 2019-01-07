@@ -9,7 +9,7 @@
 #  hosted @ https://github.com/cumulusnetworks/topology_converter
 #
 #
-version = "4.6.9"
+version = "4.6.8"
 
 
 import os
@@ -103,7 +103,6 @@ parser.add_argument('--synced-folder', action='store_true',
 parser.add_argument('--version', action='version', version="Topology \
                     Converter version is v%s" % version,
                     help='Using this option displays the version of Topology Converter')
-parser.add_argument('--prefix', help='Specify a prefix to be used for machines in libvirt. By default the name of the current folder is used.')
 args = parser.parse_args()
 
 # Parse Arguments
@@ -125,7 +124,6 @@ VAGRANTFILE_template = 'templates/Vagrantfile.j2'
 customer = os.path.basename(os.path.dirname(os.getcwd()))
 TEMPLATES = [[VAGRANTFILE_template, VAGRANTFILE]]
 arg_string = " ".join(sys.argv)
-libvirt_prefix = None
 
 if args.topology_file:
     topology_file = args.topology_file
@@ -170,9 +168,6 @@ if args.display_datastructures:
 
 if args.synced_folder:
     synced_folder = True
-
-if args.prefix != None:
-    libvirt_prefix = args.prefix
 
 if verbose:
     print("Arguments:")
@@ -716,9 +711,8 @@ def parse_topology(topology_file):
         if "memory" not in inventory[mgmt_server]:
             inventory[mgmt_server]["memory"] = "512"
 
-        if "config" not in inventory[mgmt_server]:
-            inventory[mgmt_server]["config"] = "./helper_scripts/auto_mgmt_network/OOB_Server_Config_auto_mgmt.sh"
-            
+        inventory[mgmt_server]["config"] = "./helper_scripts/auto_mgmt_network/OOB_Server_Config_auto_mgmt.sh"
+
         # Hardcode mgmt switch parameters
         if mgmt_switch is None and create_mgmt_network:
 
@@ -1244,7 +1238,7 @@ def render_jinja_templates(devices):
                 print("Making Directory for MGMT Helper Files: " + mgmt_destination_dir)
 
             try:
-                os.makedirs(mgmt_destination_dir)
+                os.mkdir(mgmt_destination_dir)
 
             except:
                 print(styles.FAIL + styles.BOLD +
@@ -1261,6 +1255,7 @@ def render_jinja_templates(devices):
                 print("    Rendering: " + template + " --> " + render_destination)
 
             template = jinja2.Template(open(template_source).read())
+
             with open(render_destination, 'w') as outfile:
                 outfile.write(template.render(devices=devices,
                                               start_port=start_port,
@@ -1276,8 +1271,7 @@ def render_jinja_templates(devices):
                                               generate_ansible_hostfile=generate_ansible_hostfile,
                                               create_mgmt_device=create_mgmt_device,
                                               function_group=function_group,
-                                              network_functions=network_functions,
-                                              libvirt_prefix=libvirt_prefix,))
+                                              network_functions=network_functions,))
 
     # Render the main Vagrantfile
     if create_mgmt_device and create_mgmt_configs_only:
@@ -1304,8 +1298,7 @@ def render_jinja_templates(devices):
                                           generate_ansible_hostfile=generate_ansible_hostfile,
                                           create_mgmt_device=create_mgmt_device,
                                           function_group=function_group,
-                                          network_functions=network_functions,
-                                          libvirt_prefix=libvirt_prefix,))
+                                          network_functions=network_functions,))
 
 
 def print_datastructures(devices):

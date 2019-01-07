@@ -1,8 +1,8 @@
 #!/bin/bash
-# Created by Topology-Converter v4.6.9
-#    Template Revision: v4.6.9
+# Created by Topology-Converter v4.6.8
+#    Template Revision: v4.6.8
 #    https://github.com/cumulusnetworks/topology_converter
-#    using topology data from: training-clag.dot
+#    using topology data from: int-ansible-training-clag-nclu.dot
 
 echo "################################################"
 echo "  Running Automatic Management Server Setup..."
@@ -15,13 +15,13 @@ echo " Detected vagrant user is: $username"
 #       KNOBS
 #######################
 
-REPOSITORY="https://github.com/CumulusNetworks/training-clag"
-REPONAME="training-clag"
+REPOSITORY="https://github.com/CumulusNetworks/int-ansible-training-clag-nclu"
+REPONAME="int-ansible-training-clag-nclu"
 
 #Install Automation Tools
 puppet=0
 ansible=1
-ansible_version=2.5.4
+ansible_version=2.6.5
 
 #######################
 
@@ -44,11 +44,11 @@ install_puppet(){
 }
 
 install_ansible(){
-    echo " ### Installing Ansible... ###"
-    apt-get install -qy ansible sshpass libssh-dev python-dev libssl-dev libffi-dev
-    pip install pip --upgrade
-    /usr/local/bin/pip install setuptools --upgrade
-    /usr/local/bin/pip install ansible==$ansible_version --upgrade
+	echo " ### Installing Ansible... ###"
+	apt-get install -qy ansible sshpass libssh-dev python-dev libssl-dev libffi-dev
+	sudo pip install pip --upgrade
+	sudo pip install setuptools --upgrade
+	sudo pip install ansible==$ansible_version --upgrade
 }
 
 ## MOTD
@@ -210,7 +210,7 @@ cat <<EOT >> /home/cumulus/.gitconfig
     editor = vim
 EOT
 
-echo " ### Adding .bash_profile to auto login as cumulus user"
+echo "### Adding .bash_profile to auto login as cumulus user"
 echo "sudo su - cumulus" >> /home/vagrant/.bash_profile
 echo "exit" >> /home/vagrant/.bash_profile
 
